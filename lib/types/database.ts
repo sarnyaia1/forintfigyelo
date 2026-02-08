@@ -69,3 +69,23 @@ export interface ExpensesByCategory {
   total: number
   count: number
 }
+
+// Budget types
+export interface Budget {
+  id: string
+  user_id: string
+  month_id: string
+  category: ExpenseCategory
+  budget_amount: number
+  created_at: string
+  updated_at: string
+  deleted_at: string | null
+}
+
+// Budget with actual spending
+export interface BudgetWithSpending extends Budget {
+  spent: number
+  remaining: number
+  percentage: number // 0-100+
+  isOverBudget: boolean
+}

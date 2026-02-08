@@ -17,12 +17,14 @@ import { logoutAction } from '@/app/actions/auth'
 import { getOrCreateMonth, getMonths } from '@/app/actions/months'
 import { getIncomeByMonth } from '@/app/actions/income'
 import { getExpensesByMonth } from '@/app/actions/expenses'
+import { getBudgetsForMonth } from '@/app/actions/budget'
 import { MonthSelector } from '@/components/dashboard/month-selector'
 import { IncomeForm } from '@/components/forms/income-form'
 import { ExpenseForm } from '@/components/forms/expense-form'
 import { IncomeList } from '@/components/dashboard/income-list'
 import { ExpenseList } from '@/components/dashboard/expense-list'
 import { SummaryCards } from '@/components/dashboard/summary-cards'
+import { BudgetOverview } from '@/components/dashboard/budget-overview'
 
 interface DashboardPageProps {
   searchParams: Promise<{ month?: string }>
@@ -59,9 +61,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   // Get income and expenses for current month
   const incomeResult = await getIncomeByMonth(currentMonth.id)
   const expenseResult = await getExpensesByMonth(currentMonth.id)
+  const budgetResult = await getBudgetsForMonth(currentMonth.id)
 
   const incomes = incomeResult.data || []
   const expenses = expenseResult.data || []
+  const budgets = budgetResult.data || []
 
   // Calculate totals
   const totalIncome = incomes.reduce((sum, item) => sum + Number(item.amount), 0)
@@ -159,6 +163,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           totalExpenses={totalExpenses}
           startingBalance={Number(currentMonth.starting_balance)}
         />
+
+        {/* Budget Section */}
+        <div className="mt-8">
+          <BudgetOverview budgets={budgets} monthId={currentMonth.id} />
+        </div>
 
         {/* Income Section */}
         <div className="mt-8">
