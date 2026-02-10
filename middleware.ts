@@ -55,10 +55,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect root to dashboard if logged in, else to login
-  if (request.nextUrl.pathname === '/') {
+  // Redirect root to dashboard if logged in (non-logged-in users see the landing page)
+  if (request.nextUrl.pathname === '/' && user) {
     const url = request.nextUrl.clone()
-    url.pathname = user ? '/dashboard' : '/login'
+    url.pathname = '/dashboard'
     return NextResponse.redirect(url)
   }
 

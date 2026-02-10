@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { format } from 'date-fns'
@@ -19,12 +20,17 @@ import { getIncomeByMonth } from '@/app/actions/income'
 import { getExpensesByMonth } from '@/app/actions/expenses'
 import { getBudgetsForMonth } from '@/app/actions/budget'
 import { MonthSelector } from '@/components/dashboard/month-selector'
+import { MobileNav } from '@/components/dashboard/mobile-nav'
 import { IncomeForm } from '@/components/forms/income-form'
 import { ExpenseForm } from '@/components/forms/expense-form'
 import { IncomeList } from '@/components/dashboard/income-list'
 import { ExpenseList } from '@/components/dashboard/expense-list'
 import { SummaryCards } from '@/components/dashboard/summary-cards'
 import { BudgetOverview } from '@/components/dashboard/budget-overview'
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+}
 
 interface DashboardPageProps {
   searchParams: Promise<{ month?: string }>
@@ -87,11 +93,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 </span>
               </div>
 
-              {/* Month Selector */}
-              <MonthSelector months={allMonths} currentMonth={currentMonthStr} />
+              {/* Month Selector - hidden on mobile, shown in mobile nav */}
+              <div className="hidden sm:block">
+                <MonthSelector months={allMonths} currentMonth={currentMonthStr} />
+              </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            {/* Desktop nav */}
+            <div className="hidden sm:flex items-center gap-4">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 <span className="font-semibold">{user.email}</span>
               </div>
@@ -101,6 +110,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 </Button>
               </form>
             </div>
+
+            {/* Mobile nav */}
+            <div className="sm:hidden">
+              <MobileNav email={user.email || ''} />
+            </div>
+          </div>
+
+          {/* Mobile month selector */}
+          <div className="sm:hidden pb-3">
+            <MonthSelector months={allMonths} currentMonth={currentMonthStr} />
           </div>
         </div>
       </nav>
@@ -108,7 +127,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with Action Buttons */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Dashboard
